@@ -28,8 +28,8 @@ jobs:
       id: meta
       with: 
         images: |
-            name/app
-            ghcr.io/username/app
+            ${{ env.IMAGE_NAME }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
             type=schedule
             type=ref,event=branch
@@ -38,7 +38,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-        #- name: Build the Docker image
-          #run: |
-          #docker build . --file Dockerfile --tag ghcr.io/sheathedblade/aria-runner:latest
-
+    - uses: docker/build-push-action@v6
+      name: Build docker image
+      with:
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
