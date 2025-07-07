@@ -23,7 +23,7 @@ jobs:
         OWNER: '${{ github.repository_owner }}'
     - name: Test Owner LC
       run:
-        echo ${OWNER_LC}
+        echo "${OWNER_LC}"
           #- name: Build the Docker image
           #run: |
           #docker login --username ${{ github.repository_owner }} --password ${{ secrets.GHCR_TOKEN }} ghcr.io
