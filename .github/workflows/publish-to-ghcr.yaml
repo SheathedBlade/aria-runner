@@ -1,0 +1,31 @@
+name: Publish Container Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Lowercase GH Repo Owner
+      run: |
+        echo "OWNER_LC=${OWNER,,} >>${GITHUB_ENV}"
+      env:
+        OWNER: '${{ github.repository_owner }}'
+    - name: Test Owner LC
+      run:
+        echo ${OWNER_LC}
+          #- name: Build the Docker image
+          #run: |
+          #docker login --username ${{ github.repository_owner }} --password ${{ secrets.GHCR_TOKEN }} ghcr.io
+          #docker build . --file Dockerfile --tag ghcr.io/sheathedblade/aria-runner:latest
+
