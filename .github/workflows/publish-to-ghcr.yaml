@@ -16,16 +16,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Lowercase GH Repo Owner
-      run: |
-        echo "OWNER_LC=${OWNER,,} >>${GITHUB_ENV}"
-      env:
-        OWNER: '${{ github.repository_owner }}'
-    - name: Test Owner LC
-      run:
-        echo "${OWNER_LC}"
-          #- name: Build the Docker image
+      name: Checkout repository
+    - uses: docker/login-action@v3
+      name: Login to GHCR
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
+    - uses: docker/metadata-action@v5
+      name: Extract Docker metadata
+      id: meta
+      with: 
+        images: |
+            name/app
+            ghcr.io/username/app
+        tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+        #- name: Build the Docker image
           #run: |
-          #docker login --username ${{ github.repository_owner }} --password ${{ secrets.GHCR_TOKEN }} ghcr.io
           #docker build . --file Dockerfile --tag ghcr.io/sheathedblade/aria-runner:latest
 
